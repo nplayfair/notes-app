@@ -2,7 +2,28 @@ const Note = require('../models/note.model.js');
 
 // create and save new note
 exports.create = (req, res) => {
+  // validate request
+  if(!req.body.content) {
+    return res.status(400).send({
+      message: "Note cannot be empty"
+    });
+  }
 
+  // create a new note
+  const note = new Note({
+    title: req.body.title || "Untitled Note",
+    content: req.body.content
+  });
+
+  // save note in the database
+  note.save()
+  .then(data => {
+    res.send(data);
+  }).catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the note."
+      });
+  });
 };
 
 // retrieve and return all notes from the database
